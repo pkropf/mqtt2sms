@@ -7,6 +7,8 @@ Type=simple
 ExecStartPre=/usr/bin/gammu -c /etc/gammurc setautonetworklogin
 ExecStartPre=/usr/bin/gammu -c /etc/gammurc setpower ON
 ExecStart=/usr/local/bin/mqtt2sms.sh
+StandardOutput=syslog
+StandardError=syslog
 
 [Install]
 WantedBy=multi-user.target
