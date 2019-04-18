@@ -1,0 +1,12 @@
+[Unit]
+Description=start Python MQTT 2 SMS gateway
+After=network.target
+
+[Service]
+Type=simple
+ExecStartPre=/usr/bin/gammu -c /etc/gammurc setautonetworklogin
+ExecStartPre=/usr/bin/gammu -c /etc/gammurc setpower ON
+ExecStart=/usr/local/bin/mqtt2sms.sh
+
+[Install]
+WantedBy=multi-user.target
