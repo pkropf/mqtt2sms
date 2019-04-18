@@ -1,6 +1,6 @@
 [Unit]
 Description=start Python MQTT 2 SMS gateway
-After=network.target
+After=network.target dev-ttyUSB0.device
 
 [Service]
 Type=simple
