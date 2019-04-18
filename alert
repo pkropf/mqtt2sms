@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+message="$1"
+number="${2-4084829427}"
+SCRIPT_PATH=`dirname "${BASH_SOURCE[0]}"`
+
+function mqttconf {
+    grep -i "$1" $SCRIPT_PATH/mqtt.ini | awk '{print $3}'
+}
+
+mosquitto_pub -h "$(mqttconf host)" -p "$(mqttconf port)" -u "$(mqttconf user)" -P "$(mqttconf password)" -t "sms" -m "{\"message\": \"$message\", \"number\": \"$number\"}"

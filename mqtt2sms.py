@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.7
+#! /usr/bin/env python3.7
 
 import paho.mqtt.client as mqtt
 import json
@@ -8,6 +8,7 @@ import os
 import time
 import logging
 import sys
+
 
 class SMSGateway(object):
     def __init__(self):
@@ -30,6 +31,7 @@ class SMSGateway(object):
             print("SMS sending failed: %s" % e, file=sys.stderr)
             return False
 
+
 class MQTTSMSListener(mqtt.Client):
     def on_message(self, mqttc, obj, msg):
         try:
@@ -50,7 +52,8 @@ class MQTTSMSListener(mqtt.Client):
     def run(self):
         self.sms = SMSGateway()
         mqttconf = configparser.ConfigParser()
-        mqttconf.read('/etc/mqtt.ini')
+        ini_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'mqtt.ini')
+        mqttconf.read(ini_file)
         self.username_pw_set(
             mqttconf.get('mqtt', 'user'),
             mqttconf.get('mqtt', 'password')
