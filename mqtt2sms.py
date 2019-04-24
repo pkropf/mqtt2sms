@@ -52,7 +52,7 @@ class MQTTSMSListener(mqtt.Client):
     def run(self):
         self.sms = SMSGateway()
         mqttconf = configparser.ConfigParser()
-        ini_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'mqtt.ini')
+        ini_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'mqtt2sms.ini')
         mqttconf.read(ini_file)
         self.username_pw_set(
             mqttconf.get('mqtt', 'user'),
