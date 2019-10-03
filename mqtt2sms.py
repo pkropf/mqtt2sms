@@ -25,29 +25,30 @@ class SMSGateway(object):
 
         try:
             self.sm.SendSMS(message)
-            print("sending SMS to %s with text %s" % (number, text), file=sys.stdout)
+            print(f"sending SMS to {number} with text {text}")
             return True
         except Exception as e:
-            print("SMS sending failed: %s" % e, file=sys.stderr)
+            print(f"SMS sending failed: {e}")
             return False
 
 
 class MQTTSMSListener(mqtt.Client):
     def on_message(self, mqttc, obj, msg):
         try:
-            data = json.loads(msg.payload.decode("utf-8"))
+            data = json.loads(msg.payload.decode("utf-8"), strict=False)
             message = data.get('message', None)
             if not message:
-                print('no message body to send', file=sys.stderr)
+                print('no message body to send')
                 return False
 
             number = data.get('number', None)
             if not number:
-                print('no number to send to', file=sys.stderr)
+                print('no number to send to')
                 return False
+            print(f'sending: {message} to {number}')
             self.sms.send(message, number)
         except Exception as e:
-            print('failed to decode JSON, reason: %s, string: %s' % (e, msg.payload), file=sys.stderr)
+            print(f'failed to decode JSON, reason: {e}, string: {msg.payload}')
 
     def run(self):
         self.sms = SMSGateway()
@@ -66,6 +67,7 @@ class MQTTSMSListener(mqtt.Client):
         )
         self.subscribe("sms")
 
+        print('MQTTSMSListener running')
         rc = 0
         while rc == 0:
             rc = self.loop()
