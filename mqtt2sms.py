@@ -25,10 +25,10 @@ class SMSGateway(object):
 
         try:
             self.sm.SendSMS(message)
-            print(f"sending SMS to {number} with text {text}")
+            logging.info(f"sending SMS to {number} with text {text}")
             return True
         except Exception as e:
-            print(f"SMS sending failed: {e}")
+            logging.error(f"SMS sending failed: {e}")
             return False
 
 
@@ -38,23 +38,26 @@ class MQTTSMSListener(mqtt.Client):
             data = json.loads(msg.payload.decode("utf-8"), strict=False)
             message = data.get('message', None)
             if not message:
-                print('no message body to send')
+                logging.error('no message body to send')
                 return False
 
             number = data.get('number', None)
             if not number:
-                print('no number to send to')
+                logging.error('no number to send to')
                 return False
-            print(f'sending: {message} to {number}')
             self.sms.send(message, number)
+            logging.info(f'message sent')
         except Exception as e:
-            print(f'failed to decode JSON, reason: {e}, string: {msg.payload}')
+            logging.error(f'failed to decode JSON, reason: {e}, string: {msg.payload}')
 
     def run(self):
         self.sms = SMSGateway()
         mqttconf = configparser.ConfigParser()
         ini_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'mqtt2sms.ini')
         mqttconf.read(ini_file)
+
+        logging.basicConfig(filename=mqttconf.get('general', 'logfile'), level=logging.DEBUG)
+
         self.username_pw_set(
             mqttconf.get('mqtt', 'user'),
             mqttconf.get('mqtt', 'password')
@@ -67,7 +70,7 @@ class MQTTSMSListener(mqtt.Client):
         )
         self.subscribe("sms")
 
-        print('MQTTSMSListener running')
+        logging.info('MQTTSMSListener running')
         rc = 0
         while rc == 0:
             rc = self.loop()
