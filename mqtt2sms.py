@@ -56,7 +56,7 @@ class MQTTSMSListener(mqtt.Client):
         ini_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'mqtt2sms.ini')
         mqttconf.read(ini_file)
 
-        logging.basicConfig(filename=mqttconf.get('general', 'logfile'), level=logging.DEBUG)
+        logging.basicConfig(filename=mqttconf.get('general', 'logfile'), level=logging.DEBUG, format='%(asctime)s %(message)s')
 
         self.username_pw_set(
             mqttconf.get('mqtt', 'user'),
