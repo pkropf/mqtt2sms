@@ -1,0 +1,2 @@
+check program mqtt2sms with path "/bin/systemctl --quiet is-active mqtt2sms"
+    if status != 0 then exec "/bin/systemctl start mqtt2sms"
